@@ -73,15 +73,15 @@
     (lambda (x)
       (syntax-case x ()
         [(_ name record-assertion record-error record-exception)
-         (with-implicit (name assert-true assert-error)
-           #'(module name (assert-true assert-error)
+         (with-implicit (name assert-true assert-false assert-error)
+           #'(module name (assert-true assert-false assert-error)
                (define-equivalence-assertions
                  name record-assertion record-error record-exception
                  (eq? eqv? equal? = < > <= >= fx=? fx<? fx>? fx<=? fx>=?
                   fl=? fl<? fl>? fl<=? fl>=? string=? char=?))
                (define-predicate-assertions
                  name record-assertion record-error record-exception
-                 (boolean? sybmol? string?  identifier? char?))
+                 (boolean? sybmol? string? identifier? char?))
                (define-syntax assert-true
                  (syntax-rules ()
                    [(_ ?actual)
@@ -90,6 +90,15 @@
                       (unless actual
                         (record-error
                           (format "~s is not a true value" actual)
+                          #'?actual)))]))
+               (define-syntax assert-false
+                 (syntax-rules ()
+                   [(_ ?actual)
+                    (let ([actual ?actual])
+                      (record-assertion)
+                      (when actual
+                        (record-error
+                          (format "~s is not a #f" actual)
                           #'?actual)))]))
                (define-syntax assert-error
                  (syntax-rules ()
@@ -104,7 +113,9 @@
                                               (and (message-condition? c)
                                                    (condition-message c)))])
                                     (unless (string=? actual-msg msg)
-                                      (record-exception "~s is not the expected execption message ~s"
+                                      (record-exception 
+                                        (format "~s is not the expected execption message ~s"
+                                          actual-msg msg)
                                         #'?actual)))])
                         (let ([actual ?actual])
                           (record-error (format "~s instead of exception" actual) #'?actual))))]))))]))))
