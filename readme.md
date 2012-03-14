@@ -15,11 +15,11 @@ run on the console.
 Defining Tests
 ===============
 
-Tests can be defined within the ``define-test-suite'' form.  This form takes a
+Tests can be defined within the ``define-test-suite`` form.  This form takes a
 name for the test suite and a list of test definitions defined with
-``define-test''.  Each test definition has a name for the test and a set of
+``define-test``.  Each test definition has a name for the test and a set of
 definitions and expressions that can include assertions.  For example, the
-``foo'' test suite can be define as follows.
+``foo`` test suite can be define as follows.
 
     (import (rough-draft unit-test))
     (define-test-suite foo
@@ -35,18 +35,18 @@ definitions and expressions that can include assertions.  For example, the
 Assertions can only be used within the body of a test definition. Assertion
 definitons break down into a few categories.  Comparison assertions take two
 arguments, first a test expression that produces a value and then an expected
-value.  The current list of comparison assertions is ``assert-eq?'',
-``assert-equal?'', ``assert-eqv?'', ``assert-<'', ``assert-<='', ``assert-='',
-``assert->'', ``assert->='',  ``assert-char=?'', ``assert-fl<=?'',
-``assert-fl<?'', ``assert-fl=?'', ``assert-fl>=?'', ``assert-fl>?'',
-``assert-fx<=?'', ``assert-fx<?'', ``assert-fx=?'', ``assert-fx>=?'',
-``assert-fx>?'', and ``assert-string=?''.  The second category are type
+value.  The current list of comparison assertions is ``assert-eq?``,
+``assert-equal?``, ``assert-eqv?``, ``assert-<``, ``assert-<=``, ``assert-=``,
+``assert->``, ``assert->=``,  ``assert-char=?``, ``assert-fl<=?``,
+``assert-fl<?``, ``assert-fl=?``, ``assert-fl>=?``, ``assert-fl>?``,
+``assert-fx<=?``, ``assert-fx<?``, ``assert-fx=?``, ``assert-fx>=?``,
+``assert-fx>?``, and ``assert-string=?``.  The second category are type
 checking assertions that take a single argument that will be tested for type
 based on the assertion.  The current list of type checking assertions is
-``assert-boolean?'', ``assert-char?'', ``assert-identifier?'',
-``assert-string?'', and ``assert-sybmol?''.  Finally there are two special
-assertions.  The ``assert-true'' assertion succeeds if the expression it is
-passed is a true value.  The ``assert-error'' takes an expression expected to
+``assert-boolean?``, ``assert-char?``, ``assert-identifier?``,
+``assert-string?``, and ``assert-sybmol?``.  Finally there are two special
+assertions.  The ``assert-true`` assertion succeeds if the expression it is
+passed is a true value.  The ``assert-error`` takes an expression expected to
 throw an exception and an expected exception message.
 
 Running Tests
@@ -75,13 +75,13 @@ follows.
       Testing first-test ...#t
     Ran 2 tests with 4 assertions, 0 tests failed (0 errors, 0 exceptions)
 
-The exmples from this readme are in the ``examples'' subdirectory and can be
+The exmples from this readme are in the ``examples`` subdirectory and can be
 run from the command line with Chez Scheme using:
 
     scheme --libdirs "../src" --program example1.ss
 
 The test makes use of features that require Chez Scheme 8.4.  The test can also
-be run using Petite Chez Scheme 8.4, simply replace ``scheme'' in the above
-line with ``petite''.
+be run using Petite Chez Scheme 8.4, simply replace ``scheme`` in the above
+line with ``petite``.
 
 
