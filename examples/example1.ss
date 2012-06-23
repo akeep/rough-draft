@@ -1,3 +1,6 @@
+;;; Copyright (c) 2012 Andrew W. Keep
+;;; See the accompanying file Copyright for detatils
+
 (import
   (rnrs)
   (rough-draft unit-test)

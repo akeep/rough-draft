@@ -1,3 +1,6 @@
+;;; Copyright (c) 2012 Andrew W. Keep
+;;; See the accompanying file Copyright for detatils
+
 (library (rough-draft helpers)
   (export construct-name)
   (import (rnrs))

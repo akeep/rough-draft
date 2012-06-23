@@ -1,9 +1,10 @@
+;;; Copyright (c) 2012 Andrew W. Keep
+;;; See the accompanying file Copyright for detatils
+
 (library (rough-draft assertions)
-  (export assertion-module)
-  (import
-    (rnrs)
-    (rough-draft helpers)
-    (only (chezscheme) module export with-implicit format format-condition?))
+  (export assertion-module define-assertion)
+  (import (rnrs) (rough-draft helpers)
+    (only (chezscheme) module export with-implicit format format-condition? trace-define-syntax))
   
   (define-syntax define-equivalence-assertions
     (lambda (x)
@@ -118,4 +119,25 @@
                                           actual-msg msg)
                                         #'?actual)))])
                         (let ([actual ?actual])
-                          (record-error (format "~s instead of exception" actual) #'?actual))))]))))]))))
+                          (record-error (format "~s instead of exception" actual) #'?actual))))]))))])))
+
+  (define-syntax define-assertion
+    (lambda (x)
+      (syntax-case x ()
+        [(_ ?name ?pred)
+         (with-syntax ([assert-name (construct-name #'?name "assert-" #'?name)])
+           #'(define-assertion ?name assert-name ?pred))]
+        [(_ ?name ?assert-name ?pred)
+         #'(begin
+             (define ?name ?pred)
+             (define-syntax ?assert-name
+               (lambda (x)
+                 (syntax-case x ()
+                   [(id ?actual ?expected)
+                     (with-implicit (id record-assertion record-error record-exception)
+                       #'(let ([actual ?actual] [expected ?expected])
+                           (record-assertion)
+                           (unless (?name actual expected)
+                             (record-error
+                               (format "~s is not ~s to ~s" actual '?name expected)
+                               #'?actual))))]))))]))))

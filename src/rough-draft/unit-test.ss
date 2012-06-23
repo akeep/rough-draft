@@ -1,9 +1,12 @@
+;;; Copyright (c) 2012 Andrew W. Keep
+;;; See the accompanying file Copyright for detatils
+
 (library (rough-draft unit-test)
   (export define-test-suite)
   (import
     (rnrs)
     (rough-draft assertions)
-    (only (chezscheme) warningf import))
+    (only (chezscheme) warningf import trace-lambda trace-define with-implicit))
 
   (define-syntax define-test-suite 
     (lambda (x)
@@ -12,11 +15,12 @@
         (lambda (test)
           (syntax-case test ()
             [(_ name e0 e1 ...)
-             #'(name (lambda (record-assertion record-error record-exception)
-                       (assertion-module name
-                         record-assertion record-error record-exception)
-                       (import name)
-                       e0 e1 ...))]
+             (with-implicit (name record-assertion record-error record-exception)
+               #'(name (lambda (record-assertion record-error record-exception)
+                         (assertion-module name
+                           record-assertion record-error record-exception)
+                         (import name)
+                         e0 e1 ...)))]
             [test (syntax-violation who "invalid test syntax" x #'test)])))
       (syntax-case x ()
         [(_ name test tests ...)

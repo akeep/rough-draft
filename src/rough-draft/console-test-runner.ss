@@ -1,14 +1,12 @@
+;;; Copyright (c) 2012 Andrew W. Keep
+;;; See the accompanying file Copyright for detatils
+
 (library (rough-draft console-test-runner)
-  (export run-test run-tests run-test-suite)
-  (import (rnrs) (only (chezscheme)
-                   syntax->annotation
-                   annotation-stripped
-                   annotation-source
-                   source-object-sfd
-                   open-source-file
-                   source-object-bfp
-                   with-output-to-string
-                   format printf display-condition))
+  (export run-test run-tests run-test-suite run-test-suites)
+  (import (rnrs)
+    (only (chezscheme) syntax->annotation annotation-stripped annotation-source
+      source-object-sfd open-source-file source-object-bfp with-output-to-string
+      format printf display-condition void))
 
   (define-record-type suite-info
     (nongenerative)
@@ -96,8 +94,8 @@
               (suite-info-error-count suite-info)
               (suite-info-exception-count suite-info)))
           (test-runner suite-info) tests))))
-  
-  (define run-test-suite
+
+  (define $run-test-suite
     (lambda (test-suite)
       (let ([suite-info (make-suite-info)])
         (test-suite
@@ -111,4 +109,32 @@
               (suite-info-failure-count suite-info)
               (suite-info-error-count suite-info)
               (suite-info-exception-count suite-info)))
-          (test-runner suite-info) #t)))))
+          (test-runner suite-info) #t)
+        suite-info)))
+
+  (define map-+
+    (lambda (f records)
+      (let loop ([records records] [sum 0])
+        (if (null? records)
+            sum
+            (loop (cdr records) (+ (f (car records)) sum))))))
+  
+  (define run-test-suites
+    (lambda test-suites
+      (let loop ([test-suites test-suites] [suite-info* '()])
+        (if (null? test-suites)
+            (begin
+              (printf "Summary: Ran ~d test suite~:p with ~d test~:p and ~d assertion~:p, "
+                (length suite-info*)
+                (map-+ suite-info-test-count suite-info*)
+                (map-+ suite-info-assertion-count suite-info*))
+              (printf "~d test~:p failed (~d error~:p, ~d exception~:p)~%"
+                (map-+ suite-info-failure-count suite-info*)
+                (map-+ suite-info-error-count suite-info*)
+                (map-+ suite-info-exception-count suite-info*)))
+            (loop (cdr test-suites) (cons ($run-test-suite (car test-suites)) suite-info*))))))
+
+  (define run-test-suite
+    (lambda (test-suite)
+      ($run-test-suite test-suite)
+      (void))))
