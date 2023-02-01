@@ -123,7 +123,8 @@
     (lambda test-suites
       (let loop ([test-suites test-suites] [suite-info* '()])
         (if (null? test-suites)
-            (begin
+            (let ([failure-count  (map-+ suite-info-failure-count suite-info*)]
+                  [exception-count (map-+ suite-info-exception-count suite-info*)])
               (printf "Summary: Ran ~d test suite~:p with ~d test~:p and ~d assertion~:p, "
                 (length suite-info*)
                 (map-+ suite-info-test-count suite-info*)
@@ -131,10 +132,14 @@
               (printf "~d test~:p failed (~d error~:p, ~d exception~:p)~%"
                 (map-+ suite-info-failure-count suite-info*)
                 (map-+ suite-info-error-count suite-info*)
-                (map-+ suite-info-exception-count suite-info*)))
+                (map-+ suite-info-exception-count suite-info*))
+              (exit (+ failure-count exception-count)))
             (loop (cdr test-suites) (cons ($run-test-suite (car test-suites)) suite-info*))))))
 
   (define run-test-suite
     (lambda (test-suite)
-      ($run-test-suite test-suite)
-      (void))))
+      (let* ([res ($run-test-suite test-suite)]
+             [failure-count (suite-info-failure-count res)]
+             [error-count (suite-info-error-count res)]
+             [exit-code (+ failure-count error-count)])
+        (exit exit-code)))))
