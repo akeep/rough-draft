@@ -27,3 +27,4 @@
 
 (run-tests foo second-test first-test)
 
+(run-test-suites foo bar)
