@@ -16,9 +16,15 @@
       (assert-string=? (list->string y) "foo")
       (assert-char=? (car y) #\f))))
 
+(define-test-suite bar
+  (define-test third-test
+    (assert-equal? '(2 3) (cdr '(1 2 3)))))
+
 (run-test-suite foo)
+(run-test-suite bar)
 
 (run-test foo first-test)
 
 (run-tests foo second-test first-test)
 
+(run-test-suites foo bar)
